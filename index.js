@@ -10,6 +10,17 @@ const db = mysql.createConnection(
   console.log(`Connected to the workforce_db database.`)
 );
 
+const roles = [
+  "Sales Lead",
+  "Salesperson",
+  "Lead Engineer",
+  "Account Manager",
+  "Accountant",
+  "Legal Team Lead",
+  "Lawyer",
+];
+const managers = ["Leslie", "Ann", "April", "Gerry"];
+
 const questions = [
   {
     type: "list",
@@ -35,12 +46,52 @@ const deptQuestions = [
     name: "depName",
   },
 ];
-
 function addDepartment() {
   inquirer.prompt(deptQuestions).then((response) => {
     console.log(response);
 
     db.query(`INSERT INTO department (name) VALUES  ("${response.depName}")`);
+    init();
+  });
+}
+
+const newEmpQuestions = [
+  // First Name
+  {
+    type: "input",
+    message: "Employee First Name:",
+    name: "firstName",
+  },
+  // Last Name
+  {
+    type: "input",
+    message: "Employee Last Name:",
+    name: "lastName",
+  },
+  // Role
+  {
+    type: "list",
+    message: "Employee's Role:",
+    name: "roleName",
+    choices: roles,
+  },
+  // Manager
+  {
+    type: "list",
+    message: "Employee's Manager",
+    name: "managerName",
+    choices: managers,
+  },
+];
+function addEmp() {
+  inquirer.prompt(newEmpQuestions).then((response) => {
+    console.log(response);
+    let roleNum = roles.indexOf(`${response.roleName}`) + 1;
+    let managerNum = managers.indexOf(`${response.managerName}`) + 1;
+
+    db.query(
+      `INSERT INTO employee (first_name, last_name, roles_id, manager_id) VALUES  ("${response.firstName}", "${response.lastName}", ${roleNum}, ${managerNum})`
+    );
     init();
   });
 }
@@ -87,6 +138,8 @@ function init() {
       case "Add Department":
         addDepartment();
         break;
+      case "Quit":
+        process.exit();
       default:
         return;
     }
