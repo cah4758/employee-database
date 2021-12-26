@@ -21,6 +21,8 @@ const roles = [
 ];
 const managers = ["Leslie", "Ann", "April", "Gerry"];
 
+const departments = ["Engineering", "Finance", "Sales", "Legal"];
+
 const questions = [
   {
     type: "list",
@@ -49,7 +51,7 @@ const deptQuestions = [
 function addDepartment() {
   inquirer.prompt(deptQuestions).then((response) => {
     console.log(response);
-
+    departments.push(`${response.deptName}`);
     db.query(`INSERT INTO department (name) VALUES  ("${response.depName}")`);
     init();
   });
@@ -86,11 +88,43 @@ const newEmpQuestions = [
 function addEmp() {
   inquirer.prompt(newEmpQuestions).then((response) => {
     console.log(response);
-    let roleNum = roles.indexOf(`${response.roleName}`) + 1;
+    let deptNum = roles.indexOf(`${response.roleName}`) + 1;
     let managerNum = managers.indexOf(`${response.managerName}`) + 1;
 
     db.query(
       `INSERT INTO employee (first_name, last_name, roles_id, manager_id) VALUES  ("${response.firstName}", "${response.lastName}", ${roleNum}, ${managerNum})`
+    );
+    init();
+  });
+}
+
+const roleQuestions = [
+  // Role Name
+  {
+    type: "input",
+    message: "Role Name:",
+    name: "roleName",
+  },
+  // Salary
+  {
+    type: "input",
+    message: "Role Salary:",
+    name: "salary",
+  },
+  // Department
+  {
+    type: "input",
+    message: "Department:",
+    name: "department",
+  },
+];
+function addRole() {
+  inquirer.prompt(roleQuestions).then((response) => {
+    console.log(response);
+    roles.push(`${response.roleName}`);
+    let deptNum = departments.indexOf(`${response.department}`) + 1;
+    db.query(
+      `INSERT INTO  roles (title, salary, department_id) VALUES  ("${response.roleName}", ${salary}, ${deptNum})`
     );
     init();
   });
