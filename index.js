@@ -20,8 +20,8 @@ const roles = [
   "Lawyer",
 ];
 const managers = ["Leslie", "Ann", "April", "Gerry"];
-
 const departments = ["Engineering", "Finance", "Sales", "Legal"];
+console.log(roles, managers, departments);
 
 const questions = [
   {
@@ -51,7 +51,7 @@ const deptQuestions = [
 function addDepartment() {
   inquirer.prompt(deptQuestions).then((response) => {
     console.log(response);
-    departments.push(`${response.deptName}`);
+    departments.push(`${response.depName}`);
     db.query(`INSERT INTO department (name) VALUES  ("${response.depName}")`);
     init();
   });
@@ -88,7 +88,7 @@ const newEmpQuestions = [
 function addEmp() {
   inquirer.prompt(newEmpQuestions).then((response) => {
     console.log(response);
-    let deptNum = roles.indexOf(`${response.roleName}`) + 1;
+    let roleNum = roles.indexOf(`${response.roleName}`) + 1;
     let managerNum = managers.indexOf(`${response.managerName}`) + 1;
 
     db.query(
@@ -122,9 +122,10 @@ function addRole() {
   inquirer.prompt(roleQuestions).then((response) => {
     console.log(response);
     roles.push(`${response.roleName}`);
+    console.log(roles);
     let deptNum = departments.indexOf(`${response.department}`) + 1;
     db.query(
-      `INSERT INTO  roles (title, salary, department_id) VALUES  ("${response.roleName}", ${salary}, ${deptNum})`
+      `INSERT INTO  roles (title, salary, department_id) VALUES  ("${response.roleName}", ${response.salary}, ${deptNum})`
     );
     init();
   });
@@ -150,7 +151,7 @@ function init() {
         break;
       case "View All Roles":
         db.query(
-          `SELECT * FROM roles JOIN department ON roles.department_id = department.name`,
+          `SELECT department_id AS "ID", title AS "Title", salary AS "Salary", department.name AS "Deptarment" FROM roles JOIN department ON roles.department_id = department.id`,
           (err, result) => {
             if (err) {
               console.log(err);
