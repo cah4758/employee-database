@@ -135,13 +135,16 @@ function init() {
   inquirer.prompt(questions).then((response) => {
     switch (response.empQuery) {
       case "View All Employees":
-        db.query(`SELECT * FROM employee`, (err, result) => {
-          if (err) {
-            console.log(err);
+        db.query(
+          `SELECT employee.id AS "ID", CONCAT( first_name, " ", last_name ) AS "Name", roles.title AS "Title", roles.salary AS "Salary", department.name AS "Department" FROM employee JOIN roles ON employee.roles_id = roles.id JOIN department ON roles.department_id = department.id`,
+          (err, result) => {
+            if (err) {
+              console.log(err);
+            }
+            console.table(result);
+            init();
           }
-          console.table(result);
-          init();
-        });
+        );
         break;
       case "Add Employee":
         addEmp();
