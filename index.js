@@ -21,12 +21,11 @@ const roles = [
 ];
 const managers = ["Leslie", "Ann", "April", "Gerry"];
 const departments = ["Engineering", "Finance", "Sales", "Legal"];
-console.log(roles, managers, departments);
 
 const questions = [
   {
     type: "list",
-    message: "What type of license would you like to use with this project?",
+    message: "What would you like to do?",
     name: "empQuery",
     choices: [
       "View All Employees",
@@ -126,6 +125,30 @@ function addRole() {
     let deptNum = departments.indexOf(`${response.department}`) + 1;
     db.query(
       `INSERT INTO  roles (title, salary, department_id) VALUES  ("${response.roleName}", ${response.salary}, ${deptNum})`
+    );
+    init();
+  });
+}
+
+const updateQuestions = [
+  {
+    type: "input",
+    message: "Employee First Name:",
+    name: "firstName",
+  },
+  {
+    type: "list",
+    message: "Employee's New Role:",
+    name: "roleName",
+    choices: roles,
+  },
+];
+function updateEmp() {
+  inquirer.prompt(updateQuestions).then((response) => {
+    console.log(response);
+    let roleNum = roles.indexOf(`${response.roleName}`) + 1;
+    db.query(
+      `UPDATE employee SET roles_id=${roleNum} WHERE first_name="${response.firstName}" `
     );
     init();
   });
